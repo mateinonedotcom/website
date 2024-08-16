@@ -9,6 +9,11 @@
     <title>Mate In One</title>
 
     <style>
+        @font-face {
+            font-family: 'ChessCases';
+            src: url('/assets/fonts/CASEFONT.TTF');
+        }
+
         :root {
             --color-square-border: #0A0A0A;
             --color-square-white: #fafafa;
@@ -78,19 +83,12 @@
         }
 
         .piece {
-            font-size: 5rem;
+            font-family: 'ChessCases';
+            display: none;
         }
 
-        @media only screen and (max-width: 500px) {
-            .piece {
-                font-size: 3.5rem;
-            }
-        }
-
-        @media only screen and (max-width: 350px) {
-            .piece {
-                font-size: 2.5em;
-            }
+        .piece:last-child {
+            display: block;
         }
 
         .piece[data-color="white"] {
@@ -99,14 +97,6 @@
 
         .piece[data-color="black"] {
             color: var(--color-piece-black);
-        }
-
-        .piece {
-            display: none;
-        }
-
-        .piece:last-child {
-            display: block;
         }
 
         [draggable="true"] {
@@ -411,7 +401,7 @@
 
 </body>
 
-<script async>
+<script>
     const getPuzzles = () =>
         fetch("/assets/puzzles/checkmate-lichess-2012-12-31.jsonl")
             .then(response => response.text())
@@ -425,12 +415,12 @@
         puzzles[Math.floor(Math.random() * puzzles.length)];
 
     const getPieceIcon = (piece) => ({
-        "Pawn": "♟",
-        "Rook": "♜",
-        "Knight": "♞",
-        "Bishop": "♝",
-        "Queen": "♛",
-        "King": "♚",
+        "Pawn": "o",
+        "Rook": "t",
+        "Knight": "m",
+        "Bishop": "v",
+        "Queen": "w",
+        "King": "l",
     }[piece.type]);
 
     const getPieceColor = (piece) => ({
@@ -560,9 +550,6 @@
             }));
     }
 
-    const initialState = document.body.innerHTML;
-    const reset = () => document.body.innerHTML = initialState;
-
     const main = async () => {
         reset();
 
@@ -573,6 +560,22 @@
         setupMessage(puzzle);
     };
 
+    const setPieceSize = () => {
+        const setPieceSize = () => {
+            const squareWidth = document.querySelector('.square').clientWidth;
+            const pieceWidth = Math.min(75, squareWidth - 5);
+
+            document.styleSheets[0].addRule('.piece', `font-size: ${pieceWidth}px`);
+        }
+
+        window.addEventListener("resize", setPieceSize);
+        setPieceSize();
+    }
+
+    const initialState = document.body.innerHTML;
+    const reset = () => document.body.innerHTML = initialState;
+
+    setPieceSize();
     main();
 </script>
 
