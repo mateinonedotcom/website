@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"
-    style="background-color: var(--color-neutral-950); font-size: 16px; font-family: 'Inter', sans-serif; padding: 0; margin: 0;">
+    style="background-color: var(--color-black); font-size: 16px; font-family: ui-sans-serif, system-ui, sans-serif; padding: 0; margin: 0;">
 
 <head>
     <meta charset="utf-8">
@@ -10,9 +10,16 @@
 
     <style>
         :root {
-            --color-neutral-950: rgb(10 10 10);
-            --color-neutral-50: rgb(250 250 250);
-            --color-neutral-0: rgb(255 255 255);
+            --color-square-border: #0A0A0A;
+            --color-square-white: #fafafa;
+            --color-square-black: #303030;
+
+            --color-piece-white: #648fff;
+            --color-piece-black: #dc267f;
+
+            --color-black: #0A0A0A;
+            --color-white: #fafafa;
+            --color-primary: #785ef0;
         }
 
         .board {
@@ -29,185 +36,544 @@
 
         .square {
             aspect-ratio: 1 / 1;
+            padding: 0.1em;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--color-neutral-950);
+            border: 1px solid var(--color-square-border);
             position: relative;
         }
 
         .rank:nth-child(odd) .square:nth-child(odd),
         .rank:nth-child(even) .square:nth-child(even) {
-            color: var(--color-neutral-950);
-            background-color: var(--color-neutral-50);
+            color: var(--color-square-black);
+            background-color: var(--color-square-white);
         }
 
         .rank:nth-child(odd) .square:nth-child(even),
         .rank:nth-child(even) .square:nth-child(odd) {
-            color: var(--color-neutral-50);
-            background-color: var(--color-neutral-950);
+            color: var(--color-square-white);
+            background-color: var(--color-square-black);
         }
 
-        .rank .square .rank-info,
-        .rank .square .file-info {
-            position: absolute;
-            font-size: 0.7em;
-        }
-
-        .rank .square .rank-info {
-            top: 0em;
-            left: 0.2em;
-        }
-
-        .rank .square .file-info {
+        .file-info {
             bottom: 0em;
             right: 0.2em;
+        }
+
+        .valid-move {
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 0.2em,
+                    #ffb000 0.2rem,
+                    #ffb000 0.4rem);
+        }
+
+        .piece-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .piece {
+            font-size: 5rem;
+        }
+
+        @media only screen and (max-width: 500px) {
+            .piece {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media only screen and (max-width: 350px) {
+            .piece {
+                font-size: 2.5em;
+            }
+        }
+
+        .piece[data-color="white"] {
+            color: var(--color-piece-white);
+        }
+
+        .piece[data-color="black"] {
+            color: var(--color-piece-black);
+        }
+
+        .piece {
+            display: none;
+        }
+
+        .piece:last-child {
+            display: block;
+        }
+
+        [draggable="true"] {
+            cursor: grab;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message .player,
+        .message .win,
+        .message .lose {
+            margin-top: 1.5em;
+            padding: 0 1em 0 1em;
+            border-radius: 1em;
+            font-weight: 600;
+        }
+
+        .message>div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .message .player {
+            background-color: #EEE;
+        }
+
+        .message .player div {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 0.5em;
+        }
+
+        .message .player .pill {
+            width: 1.5em;
+            height: 1.5em;
+            border-radius: 50%;
+            text-align: center;
+        }
+
+        .message .player .pill.white {
+            background-color: var(--color-piece-white);
+        }
+
+        .message .player .pill.black {
+            background-color: var(--color-piece-black);
+        }
+
+        .message .win {
+            background-color: rgb(240 253 244);
+            color: rgb(22 163 74);
+        }
+
+        .message .lose {
+            background-color: rgb(254 242 242);
+            color: rgb(220 38 38);
         }
     </style>
 </head>
 
 <body style="padding: 0; margin: 0;">
     <div
-        style="background-color: var(--color-neutral-0); margin-top: 0.5rem; border-radius: 2rem 2rem 0 0; min-height: 100vh;">
-        <div style="max-width: 42rem; margin-left: auto; margin-right: auto; padding: 4rem 0.2rem 4rem 0.2rem;">
-
-            <h1
-                style="font-size: 1.75rem; font-family:Verdana, Geneva, Tahoma, sans-serif; text-align: center; ">
-                <a href="https://mateinone.com" style="color: #648fff; text-decoration:none;">Mate In One</a>
-            </h1>
-            <div class="board" style="margin-top: 2.5rem;">
+        style="background-color: var(--color-white); margin-top: 0.5rem; border-radius: 1.5rem 1.5rem 0 0; min-height: 100vh; min-width: 17em;">
+        <div style="max-width: 42rem; margin-left: auto; margin-right: auto; padding: 1rem 0.5rem 1rem 0.5rem;">
+            <div class="board">
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">8</div>
-                        57
+                    <div class="square" data-rank="8" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">58</div>
-                    <div class="square">59</div>
-                    <div class="square">60</div>
-                    <div class="square">61</div>
-                    <div class="square">62</div>
-                    <div class="square">63</div>
-                    <div class="square">64</div>
+                    <div class="square" data-rank="8" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="8" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">7</div>
-                        49
+                    <div class="square" data-rank="7" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">50</div>
-                    <div class="square">51</div>
-                    <div class="square">52</div>
-                    <div class="square">53</div>
-                    <div class="square">54</div>
-                    <div class="square">55</div>
-                    <div class="square">56</div>
+                    <div class="square" data-rank="7" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="7" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">6</div>
-                        41
+                    <div class="square" data-rank="6" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">42</div>
-                    <div class="square">43</div>
-                    <div class="square">44</div>
-                    <div class="square">45</div>
-                    <div class="square">46</div>
-                    <div class="square">47</div>
-                    <div class="square">48</div>
+                    <div class="square" data-rank="6" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="6" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">5</div>
-                        33
+                    <div class="square" data-rank="5" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">34</div>
-                    <div class="square">35</div>
-                    <div class="square">36</div>
-                    <div class="square">37</div>
-                    <div class="square">38</div>
-                    <div class="square">39</div>
-                    <div class="square">40</div>
+                    <div class="square" data-rank="5" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="5" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">4</div>
-                        25
+                    <div class="square" data-rank="4" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">26</div>
-                    <div class="square">27</div>
-                    <div class="square">28</div>
-                    <div class="square">29</div>
-                    <div class="square">30</div>
-                    <div class="square">31</div>
-                    <div class="square">32</div>
+                    <div class="square" data-rank="4" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="4" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">3</div>
-                        17
+                    <div class="square" data-rank="3" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">18</div>
-                    <div class="square">19</div>
-                    <div class="square">20</div>
-                    <div class="square">21</div>
-                    <div class="square">22</div>
-                    <div class="square">23</div>
-                    <div class="square">24</div>
+                    <div class="square" data-rank="3" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="3" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">2</div>
-                        09
+                    <div class="square" data-rank="2" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">10</div>
-                    <div class="square">11</div>
-                    <div class="square">12</div>
-                    <div class="square">13</div>
-                    <div class="square">14</div>
-                    <div class="square">15</div>
-                    <div class="square">16</div>
+                    <div class="square" data-rank="2" data-file="b">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="c">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="d">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="e">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="f">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="g">
+                        <div class="piece-container"></div>
+                    </div>
+                    <div class="square" data-rank="2" data-file="h">
+                        <div class="piece-container"></div>
+                    </div>
                 </div>
                 <div class="rank">
-                    <div class="square">
-                        <div class="rank-info">1</div>
-                        <div class="file-info">a</div>
-                        01
+                    <div class="square" data-rank="1" data-file="a">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">b</div>
-                        02
+                    <div class="square" data-rank="1" data-file="b">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">c</div>
-                        03
+                    <div class="square" data-rank="1" data-file="c">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">d</div>
-                        04
+                    <div class="square" data-rank="1" data-file="d">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">e</div>
-                        05
+                    <div class="square" data-rank="1" data-file="e">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">f</div>
-                        06
+                    <div class="square" data-rank="1" data-file="f">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">g</div>
-                        07
+                    <div class="square" data-rank="1" data-file="g">
+                        <div class="piece-container"></div>
                     </div>
-                    <div class="square">
-                        <div class="file-info">h</div>
-                        08
+                    <div class="square" data-rank="1" data-file="h">
+                        <div class="piece-container"></div>
                     </div>
                 </div>
             </div>
-            <div style="text-align: right; margin-top: 0.75rem; margin-right: 0">
-                <a href="https://mateinone.com" style="color: #648fff; text-decoration:none;">Next</a>
-            </h1>
+
+            <div class="message">
+                <div class="player">
+                    <div>
+                        <p>Checkmate with</p>
+                        <span class="pill"></span>
+                    </div>
+
+                    <button class="next">Skip</button>
+                </div>
+                <div class="win hidden">
+                    <p>Checkmate!</p>
+                    <button class="next">Next</button>
+                </div>
+                <div class="lose hidden">
+                    <p>That's not a checkmate!</p>
+
+                    <div>
+                        <button class="retry">Try Again</button>
+                        <button class="next">Skip</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
 </body>
+
+<script async>
+    const getPuzzles = () =>
+        fetch("/assets/puzzles/checkmate-lichess-2012-12-31.jsonl")
+            .then(response => response.text())
+            .then(data =>
+                data.split("\n")
+                    .filter(line => line.trim() !== "")
+                    .map(line => JSON.parse(line))
+            );
+
+    const getRandomPuzzle = (puzzles) =>
+        puzzles[Math.floor(Math.random() * puzzles.length)];
+
+    const getPieceIcon = (piece) => ({
+        "Pawn": "♟",
+        "Rook": "♜",
+        "Knight": "♞",
+        "Bishop": "♝",
+        "Queen": "♛",
+        "King": "♚",
+    }[piece.type]);
+
+    const getPieceColor = (piece) => ({
+        "White": "white",
+        "Black": "black",
+    }[piece.color]);
+
+    const createPieceElement = (puzzle, pieceSquare) => {
+        const pieceIcon = getPieceIcon(pieceSquare.piece);
+        const pieceColor = getPieceColor(pieceSquare.piece);
+
+        const element = document.createElement("div");
+        element.classList.add("piece");
+        element.setAttribute("data-color", pieceColor);
+        element.innerText = pieceIcon;
+
+        return element;
+    }
+
+    const getPieceContainer = (square) => {
+        const selector = `.square[data-rank="${square.rank}"][data-file="${square.file}"] .piece-container`;
+        return document.querySelector(selector);
+    }
+
+    const addPiece = (element, square) =>
+        getPieceContainer(square).appendChild(element);
+
+    const addEndMessage = (isCheckmate) => {
+        document
+            .querySelector('.message .player')
+            .classList.add('hidden');
+
+        document
+            .querySelector(`.message .${isCheckmate ? 'win' : 'lose'}`)
+            .classList.remove('hidden');
+    }
+
+    const addDraggableSquares = (element, validSquares, checkmateSquares) =>
+        validSquares.forEach(validSquare => {
+            const isCheckmate = checkmateSquares.find(square => squareMatch(square.to, validSquare.to));
+
+            const container = getPieceContainer(validSquare.to)
+
+            container.classList.add('valid-move');
+            container.addEventListener("dragover", (event) => event.preventDefault());
+            container.addEventListener("drop", (event) => {
+                container.appendChild(element);
+
+                removeEventListeners();
+                addEndMessage(isCheckmate);
+            });
+        });
+
+    const removeDraggableSquares = (squares) =>
+        squares.forEach(square => {
+            const container = getPieceContainer(square.to)
+
+            container.classList.remove('valid-move');
+            container.replaceWith(container.cloneNode(true));
+        });
+
+    const squareMatch = (square1, square2) =>
+        square1.rank === square2.rank && square1.file === square2.file;
+
+    const addPieceEventListener = (element, turn, square, validMoves, checkmateMoves) => {
+        if (element.getAttribute("data-color") !== turn.toLowerCase()) {
+            return;
+        }
+
+        const validSquares = validMoves.filter(move => squareMatch(move.from, square));
+        const checkmateSquares = checkmateMoves.filter(move => squareMatch(move.from, square));
+
+        element.setAttribute("draggable", "true");
+
+        element.addEventListener("dragstart", (event) => {
+            addDraggableSquares(element, validSquares, checkmateSquares);
+        });
+        element.addEventListener("dragend", (event) => {
+            removeDraggableSquares(validSquares);
+        });
+    }
+
+    const removeEventListeners = (element) => {
+        const board = document.querySelector('.board')
+        board.replaceWith(board.cloneNode(true));
+
+        document
+            .querySelectorAll('.piece')
+            .forEach(piece => piece.removeAttribute("draggable"));
+    }
+
+    const setupBoard = (puzzle) =>
+        puzzle
+            .pieceSquares
+            .forEach(pieceSquare => {
+                const element = createPieceElement(puzzle, pieceSquare);
+
+                addPiece(element, pieceSquare.square);
+
+                addPieceEventListener(element, puzzle.turn, pieceSquare.square, puzzle.validMoves, puzzle.checkmateMoves);
+            });
+
+    const setupMessage = (puzzle) => {
+        const turnElement = document.querySelector('.message .player .pill');
+        turnElement.classList.add(puzzle.turn.toLowerCase());
+
+        document
+            .querySelectorAll('.message .win, .message .lose')
+            .forEach(element => element.classList.add('hidden'));
+
+        document
+            .querySelectorAll('.message button.next')
+            .forEach(button => button.addEventListener("click", (event) => {
+                event.preventDefault()
+                main()
+            }));
+
+        document
+            .querySelectorAll('.message button.retry')
+            .forEach(button => button.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                reset();
+
+                setupBoard(puzzle);
+                setupMessage(puzzle);
+            }));
+    }
+
+    const initialState = document.body.innerHTML;
+    const reset = () => document.body.innerHTML = initialState;
+
+    const main = async () => {
+        reset();
+
+        const puzzles = await getPuzzles();
+        const puzzle = getRandomPuzzle(puzzles);
+
+        setupBoard(puzzle);
+        setupMessage(puzzle);
+    };
+
+    main();
+</script>
 
 </html>
