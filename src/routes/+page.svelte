@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { ColorPalette, ColorPalettes } from '$lib/color-palette';
-	import PuzzleComponent from '$lib/puzzle/puzzle-component.svelte';
-	import { type Puzzle, Puzzles } from '$lib/puzzle/puzzle';
 	import { GameState } from '$lib/game/game-state';
+	import { invalidateAll } from '$app/navigation';
+	import { type Puzzle, Puzzles } from '$lib/puzzle/puzzle';
 	import CallToActionComponent from '$lib/hub/call-to-action-component.svelte';
 	import ColorComponent from '$lib/hub/color-component.svelte';
 	import MetaComponent from '$lib/_/meta-component.svelte';
+	import PuzzleComponent from '$lib/puzzle/puzzle-component.svelte';
 
 	export let data;
 
-	var puzzleClone: null | Puzzle = null;
+	var puzzleClone: Puzzle = Puzzles.empty();
 	const setPuzzleClone = () => {
-		puzzleClone = null;
+		puzzleClone = Puzzles.empty();
 		window.setTimeout(() => (puzzleClone = Puzzles.clone(data.puzzle)), 0);
 	};
 
@@ -20,8 +21,10 @@
 		gameState = isCheckmate ? GameState.Win : GameState.Lose;
 	};
 
-	const onSkip = () => {
-		location.reload();
+	const onSkip = async () => {
+		puzzleClone = Puzzles.empty();
+		await invalidateAll();
+		onReset();
 	};
 
 	const onReset = () => {
