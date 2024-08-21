@@ -5,6 +5,7 @@
 	import { GameState } from '$lib/game/game-state';
 	import CallToActionComponent from '$lib/hub/call-to-action-component.svelte';
 	import ColorComponent from '$lib/hub/color-component.svelte';
+	import MetaComponent from '$lib/_/meta-component.svelte';
 
 	export let data;
 
@@ -32,6 +33,12 @@
 
 	let colorPalette: ColorPalette = ColorPalettes.default;
 </script>
+
+<MetaComponent
+	title="Mate in One"
+	description="Skips the repetitive openings and jumps straight into the action — the checkmate. You have one shot to deliver the winning move. Think you can do it?"
+	image="https://mateinone.com/favicon.png"
+/>
 
 <ColorComponent {colorPalette} />
 
