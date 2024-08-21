@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* https://www.dafont.com/chess-cases.font */
+@font-face {
+	font-family: 'CASEFONT';
+	src: url('/assets/fonts/CASEFONT.TTF');
+}
