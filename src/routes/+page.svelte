@@ -1,271 +1,50 @@
-<html
-	lang="en"
-	style="background-color: var(--color-black); font-size: 16px; font-family: ui-sans-serif, system-ui, sans-serif; padding: 0; margin: 0;"
->
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script lang="ts">
+	import { ColorPalette, ColorPalettes } from '$lib/color-palette';
+	import PuzzleComponent from '$lib/puzzle/puzzle-component.svelte';
+	import { type Puzzle, Puzzles } from '$lib/puzzle/puzzle';
+	import { GameState } from '$lib/game/game-state';
+	import CallToActionComponent from '$lib/hub/call-to-action-component.svelte';
+	import ColorComponent from '$lib/hub/color-component.svelte';
 
-		<title>Mate In One</title>
+	export let data;
 
-		<link rel="stylesheet" href="/assets/stylesheets/main.css" />
+	var puzzleClone: null | Puzzle = null;
+	const setPuzzleClone = () => {
+		puzzleClone = null;
+		window.setTimeout(() => (puzzleClone = Puzzles.clone(data.puzzle)), 0);
+	};
 
-		<script
-			defer
-			src="https://cloud.umami.is/script.js"
-			data-website-id="1abc633a-375d-4ca7-9f37-a9e4eab438e1"
-			data-domains="mateinone.com"
-		></script>
-	</head>
+	var gameState: GameState = GameState.Waiting;
+	const onMove = (isCheckmate: boolean) => {
+		gameState = isCheckmate ? GameState.Win : GameState.Lose;
+	};
 
-	<body style="padding: 0; margin: 0;">
-		<div
-			style="background-color: var(--color-white); margin-top: 0.5rem; border-radius: 1.5rem 1.5rem 0 0; min-height: 100vh; min-width: 17em;"
-		>
-			<div
-				style="max-width: 42rem; margin-left: auto; margin-right: auto; padding: 1rem 0.5rem 1rem 0.5rem;"
-			>
-				<div class="board">
-					<div class="rank">
-						<div class="square" data-rank="8" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="8" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="7" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="7" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="6" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="6" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="5" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="5" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="4" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="4" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="3" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="3" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="2" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="2" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-					<div class="rank">
-						<div class="square" data-rank="1" data-file="a">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="b">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="c">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="d">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="e">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="f">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="g">
-							<div class="piece-container"></div>
-						</div>
-						<div class="square" data-rank="1" data-file="h">
-							<div class="piece-container"></div>
-						</div>
-					</div>
-				</div>
+	const onSkip = () => {
+		location.reload();
+	};
 
-				<div class="message">
-					<div class="player">
-						<div>
-							<p>Checkmate with</p>
-							<span class="pill"></span>
-						</div>
+	const onReset = () => {
+		gameState = GameState.Waiting;
+		setPuzzleClone();
+	};
 
-						<button class="button next">Skip</button>
-					</div>
-					<div class="win hidden">
-						<p>Checkmate!</p>
-						<button class="button next">Next</button>
-					</div>
-					<div class="lose hidden">
-						<p>That's not a checkmate!</p>
+	onReset();
 
-						<div>
-							<button class="button retry">Retry</button>
-							<button class="button next">Skip</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div></body
-	>
+	let colorPalette: ColorPalette = ColorPalettes.default;
+</script>
 
-	<script src="/assets/javascripts/puzzle/client.js"></script>
-	<script src="/assets/javascripts/game/hub.js"></script>
-	<script src="/assets/javascripts/game/piece.js"></script>
-	<script src="/assets/javascripts/game/square.js"></script>
-	<script src="/assets/javascripts/game/board.js"></script>
-	<script src="/assets/javascripts/main.js"></script>
-</html>
+<ColorComponent {colorPalette} />
+
+<div class="h-full max-w-xl mx-auto flex flex-col justify-between gap-5">
+	<h1 class="mt-4 text-2xl text-center font-extrabold uppercase">Mate in One</h1>
+
+	{#if null !== puzzleClone}
+		<div class="max-w-xl mx-1">
+			<PuzzleComponent puzzle={puzzleClone} {onMove} />
+		</div>
+	{/if}
+
+	<div class="mb-2 mx-1">
+		<CallToActionComponent {colorPalette} {gameState} {onSkip} {onReset} />
+	</div>
+</div>
