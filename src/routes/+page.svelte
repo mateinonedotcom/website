@@ -10,9 +10,9 @@
 
 	export let data;
 
-	var puzzleClone: Puzzle = Puzzles.empty();
+	var puzzleClone: null | Puzzle = null;
 	const setPuzzleClone = () => {
-		puzzleClone = Puzzles.empty();
+		puzzleClone = null;
 		window.setTimeout(() => (puzzleClone = Puzzles.clone(data.puzzle)), 0);
 	};
 
