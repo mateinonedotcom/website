@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { Piece, Pieces } from '$lib/chess/piece';
-	import { ColorPalette } from '$lib/color-palette';
 
 	export let piece: Piece;
-	export let colorPalette: ColorPalette;
 
 	const getIcon = (piece: Piece) =>
 		({
@@ -17,8 +15,8 @@
 
 	const getColor = (piece: Piece) =>
 		({
-			White: colorPalette.pieceWhite.text,
-			Black: colorPalette.pieceBlack.text
+			White: 'text-board-piece-white',
+			Black: 'text-board-piece-black'
 		})[piece.color];
 </script>
 

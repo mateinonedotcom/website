@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { ColorPalette, ColorPalettes } from '$lib/color-palette';
 	import { GameState } from '$lib/game/game-state';
 	import { invalidateAll } from '$app/navigation';
 	import { type Puzzle, Puzzles } from '$lib/puzzle/puzzle';
 	import CallToActionComponent from '$lib/hub/call-to-action-component.svelte';
-	import ColorComponent from '$lib/hub/color-component.svelte';
+	import ThemeComponent from '$lib/theme/theme-component.svelte';
 	import MetaComponent from '$lib/_/meta-component.svelte';
 	import PuzzleComponent from '$lib/puzzle/puzzle-component.svelte';
+	import GearIcon from '$lib/_/icon/gear-icon.svelte';
+	import SettingsRoute from '$routes/settings/route';
 
 	export let data;
 
@@ -33,8 +34,6 @@
 	};
 
 	onReset();
-
-	let colorPalette: ColorPalette = ColorPalettes.default;
 </script>
 
 <MetaComponent
@@ -43,18 +42,23 @@
 	image="https://mateinone.com/favicon.png"
 />
 
-<ColorComponent {colorPalette} />
+<ThemeComponent />
 
 <div class="h-full max-w-xl mx-auto flex flex-col justify-between gap-5">
-	<h1 class="mt-4 text-2xl text-center font-extrabold uppercase">Mate in One</h1>
+	<div class="mt-4 mx-2 flex justify-between items-center">
+		<h1 class="text-2xl font-extrabold uppercase">Mate in One</h1>
+		<a href={SettingsRoute()}>
+			<GearIcon class="h-8 w-8" />
+		</a>
+	</div>
 
 	{#if null !== puzzleClone}
-		<div class="max-w-xl mx-1">
+		<div class="max-w-xl mx-2">
 			<PuzzleComponent puzzle={puzzleClone} {onMove} />
 		</div>
 	{/if}
 
-	<div class="mb-2 mx-1">
-		<CallToActionComponent {colorPalette} {gameState} {onSkip} {onReset} />
+	<div class="mb-2 mx-2">
+		<CallToActionComponent {gameState} {onSkip} {onReset} />
 	</div>
 </div>

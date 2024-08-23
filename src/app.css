@@ -7,3 +7,54 @@
 	font-family: 'CASEFONT';
 	src: url('/assets/fonts/CASEFONT.TTF');
 }
+
+/* https://www.chess.com/ */
+.theme-chessdotcom {
+	--color-hub-text: #ffffff;
+	--color-hub-background: #302e2b;
+
+	--color-hub-button-next: #8cb55b;
+	--color-hub-button-skip: #373634;
+	--color-hub-button-retry: #ce3c33;
+
+	--color-board-square-white: #eeeed5;
+	--color-board-square-black: #7c955d;
+	--color-board-square-active: #bdc95e;
+
+	--color-board-piece-white: #f8f8f8;
+	--color-board-piece-black: #555352;
+}
+
+/* https://lichess.org/ */
+.theme-lichessdotorg {
+	--color-hub-text: #ababab;
+	--color-hub-background: #282520;
+
+	--color-hub-button-next: #5090e0;
+	--color-hub-button-skip: #302e2c;
+	--color-hub-button-retry: #bc403a;
+
+	--color-board-square-white: #ecdab9;
+	--color-board-square-black: #ae8968;
+	--color-board-square-active: #6b6f47;
+
+	--color-board-piece-white: #ffffff;
+	--color-board-piece-black: #000000;
+}
+
+/* https://thepangry.com/chessplode/ */
+.theme-chessplode {
+	--color-hub-text: #ececec;
+	--color-hub-background: #363862;
+
+	--color-hub-button-next: #dc82a5;
+	--color-hub-button-skip: #dc82a5;
+	--color-hub-button-retry: #94cce5;
+
+	--color-board-square-white: #363862;
+	--color-board-square-black: #303258;
+	--color-board-square-active: #54456f;
+
+	--color-board-piece-white: #dc82a5;
+	--color-board-piece-black: #a0cce3;
+}
