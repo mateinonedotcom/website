@@ -53,7 +53,7 @@
 	</div>
 
 	{#if null !== puzzleClone}
-		<div class="max-w-xl mx-2">
+		<div class="max-w-xl mx-2" class:animate-shake-x={gameState === GameState.Lose}>
 			<PuzzleComponent puzzle={puzzleClone} {onMove} />
 		</div>
 	{/if}

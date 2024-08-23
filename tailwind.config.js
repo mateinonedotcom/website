@@ -29,6 +29,16 @@ export default {
 				'board-square-active': 'var(--color-board-square-active)',
 				'board-piece-white': 'var(--color-board-piece-white)',
 				'board-piece-black': 'var(--color-board-piece-black)'
+			},
+			animation: {
+				'shake-x': 'shake-x 0.5s ease-in-out'
+			},
+			keyframes: {
+				'shake-x': {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'20%, 60%': { transform: 'translateX(5px)' },
+					'40%, 80%': { transform: 'translateX(-5px)' }
+				}
 			}
 		}
 	},
