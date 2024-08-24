@@ -9,6 +9,8 @@
 	import GearIcon from '$lib/_/icon/gear-icon.svelte';
 	import SettingsRoute from '$routes/settings/route';
 
+	import confetti from 'canvas-confetti';
+
 	export let data;
 
 	var puzzleClone: null | Puzzle = null;
@@ -20,6 +22,10 @@
 	var gameState: GameState = GameState.Waiting;
 	const onMove = (isCheckmate: boolean) => {
 		gameState = isCheckmate ? GameState.Win : GameState.Lose;
+
+		if (isCheckmate) {
+			confetti({ origin: { x: 0.5, y: 0.9 } });
+		}
 	};
 
 	const onSkip = async () => {
@@ -31,6 +37,8 @@
 	const onReset = () => {
 		gameState = GameState.Waiting;
 		setPuzzleClone();
+
+		confetti.reset();
 	};
 
 	onReset();
